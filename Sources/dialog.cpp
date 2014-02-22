@@ -3,13 +3,11 @@
 int uniqueAlbumId;
 int uniqueArtistId;
 
-Dialog::Dialog(QSqlRelationalTableModel *albums, QDomDocument details,
-               QFile *output, QWidget *parent)
-     : QDialog(parent)
+Dialog::Dialog(QSqlRelationalTableModel *albums, QDomDocument details, 
+	QWidget *parent) : QDialog(parent)
 {
     model = albums;
     albumDetails = details;
-    outputFile = output;
 
     QGroupBox *inputWidgetBox = createInputWidgets();
     QDialogButtonBox *buttonBox = createButtons();

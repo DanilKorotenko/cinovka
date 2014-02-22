@@ -8,16 +8,11 @@
 extern int uniqueAlbumId;
 extern int uniqueArtistId;
 
-MainWindow::MainWindow(const QString &artistTable, const QString &albumTable,
-                       QFile *albumDetails, QWidget *parent)
-     : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    file = albumDetails;
-    readAlbumData();
-
     model = new QSqlRelationalTableModel(this);
-    model->setTable(albumTable);
-    model->setRelation(2, QSqlRelation(artistTable, "id", "artist"));
+    model->setTable("orders");
+    model->setRelation(2, QSqlRelation("jobs", "id", "artist"));
     model->select();
 
     QGroupBox *artists = createArtistGroupBox();
@@ -52,14 +47,19 @@ MainWindow::MainWindow(const QString &artistTable, const QString &albumTable,
 
 void MainWindow::changeArtist(int row)
 {
-    if (row > 0) {
+    if (row > 0) 
+	{
         QModelIndex index = model->relationModel(2)->index(row, 1);
         model->setFilter("artist = '" + index.data().toString() + '\'') ;
         showArtistProfile(index);
-    } else if (row == 0) {
+    } 
+	else if (row == 0) 
+	{
         model->setFilter(QString());
         showImageLabel();
-    } else {
+    } 
+	else 
+	{
         return;
     }
 }
@@ -95,15 +95,20 @@ void MainWindow::showAlbumDetails(QModelIndex index)
     titleLabel->show();
 
     QDomNodeList albums = albumData.elementsByTagName("album");
-    for (int i = 0; i < albums.count(); i++) {
+    for (int i = 0; i < albums.count(); i++) 
+	{
         QDomNode album = albums.item(i);
-        if (album.toElement().attribute("id") == albumId) {
+        if (album.toElement().attribute("id") == albumId) 
+		{
             getTrackList(album.toElement());
             break;
         }
     }
+
     if (!trackList->count() == 0)
+	{
         trackList->show();
+	}
 }
 
 void MainWindow::getTrackList(QDomNode album)
@@ -114,8 +119,8 @@ void MainWindow::getTrackList(QDomNode album)
     QDomNode track;
     QString trackNumber;
 
-    for (int j = 0; j < tracks.count(); j++) {
-
+    for (int j = 0; j < tracks.count(); j++) 
+	{
         track = tracks.item(j);
         trackNumber = track.toElement().attribute("number");
 
@@ -126,10 +131,11 @@ void MainWindow::getTrackList(QDomNode album)
 
 void MainWindow::addAlbum()
 {
-    Dialog *dialog = new Dialog(model, albumData, file, this);
+    Dialog *dialog = new Dialog(model, albumData, this);
     int accepted = dialog->exec();
 
-    if (accepted == 1) {
+    if (accepted == 1) 
+	{
         int lastRow = model->rowCount() - 1;
         albumView->selectRow(lastRow);
         albumView->scrollToBottom();
@@ -141,7 +147,8 @@ void MainWindow::deleteAlbum()
 {
     QModelIndexList selection = albumView->selectionModel()->selectedRows(0);
 
-    if (!selection.empty()) {
+    if (!selection.empty()) 
+	{
         QModelIndex idIndex = selection.at(0);
         int id = idIndex.data().toInt();
         QString title = idIndex.sibling(idIndex.row(), 1).data().toString();
@@ -154,14 +161,17 @@ void MainWindow::deleteAlbum()
                                        .arg(title, artist),
                                        QMessageBox::Yes | QMessageBox::No);
 
-        if (button == QMessageBox::Yes) {
+        if (button == QMessageBox::Yes) 
+		{
             removeAlbumFromFile(id);
             removeAlbumFromDatabase(idIndex);
             decreaseAlbumCount(indexOfArtist(artist));
 
             showImageLabel();
         }
-    } else {
+    }
+	else 
+	{
         QMessageBox::information(this, tr("Delete Album"),
                                  tr("Select the album you want to delete."));
     }
@@ -172,9 +182,11 @@ void MainWindow::removeAlbumFromFile(int id)
 
     QDomNodeList albums = albumData.elementsByTagName("album");
 
-    for (int i = 0; i < albums.count(); i++) {
+    for (int i = 0; i < albums.count(); i++) 
+	{
         QDomNode node = albums.item(i);
-        if (node.toElement().attribute("id").toInt() == id) {
+        if (node.toElement().attribute("id").toInt() == id) 
+		{
             albumData.elementsByTagName("archive").item(0).removeChild(node);
             break;
         }
@@ -207,24 +219,15 @@ void MainWindow::decreaseAlbumCount(QModelIndex artistIndex)
 
     QSqlTableModel *artists = model->relationModel(2);
 
-    if (albumCount == 1) {
+    if (albumCount == 1) 
+	{
         artists->removeRow(row);
         showImageLabel();
-    } else {
+    }
+	else 
+	{
         artists->setData(albumCountIndex, QVariant(albumCount - 1));
     }
-}
-
-void MainWindow::readAlbumData()
-{
-    if (!file->open(QIODevice::ReadOnly))
-        return;
-
-    if (!albumData.setContent(file)) {
-        file->close();
-        return;
-    }
-    file->close();
 }
 
 QGroupBox* MainWindow::createArtistGroupBox()
@@ -377,14 +380,7 @@ void MainWindow::adjustHeader()
 
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("About Music Archive"),
-            tr("<p>The <b>Music Archive</b> example shows how to present "
-               "data from different data sources in the same application. "
-               "The album titles, and the corresponding artists and release dates, "
-               "are kept in a database, while each album's tracks are stored "
-               "in an XML file. </p><p>The example also shows how to add as "
-               "well as remove data from both the database and the "
-               "associated XML file using the API provided by the Qt SQL and "
-               "Qt XML modules, respectively.</p>"));
+    QMessageBox::about(this, tr("Application for cinovka calculation"),
+            tr("<p>The <b>Cinovka</b> help to calculate cinovka.</p>"));
 }
 

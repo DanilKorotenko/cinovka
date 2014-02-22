@@ -20,8 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(const QString &artistTable, const QString &albumTable,
-               QFile *albumDetails, QWidget *parent = 0);
+    MainWindow(QWidget *parent = 0);
 
 private slots:
     void about();
@@ -56,7 +55,6 @@ private:
     QLabel *titleLabel;
 
     QDomDocument albumData;
-    QFile *file;
     QSqlRelationalTableModel *model;
 };
 
