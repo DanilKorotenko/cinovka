@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "dialog.h"
 
 #include <QtWidgets>
 #include <QtSql>
@@ -7,35 +6,63 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    _model = new QSqlRelationalTableModel(this);
-    _model->setTable("orders");
-    _model->setRelation(2, QSqlRelation("jobs", "id", "artist"));
-    _model->select();
+//    _model = new QSqlRelationalTableModel(this);
+//   _model->setTable("orders");
+//    _model->setRelation(2, QSqlRelation("jobs", "id", "artist"));
+//    _model->select();
 
-    QGroupBox *artists = createArtistGroupBox();
-    QGroupBox *albums = createAlbumGroupBox();
-    QGroupBox *details = createDetailsGroupBox();
+    _orderTable = new QTableView;
+//    _albumView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//    _albumView->setSortingEnabled(true);
+//    _albumView->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    _albumView->setSelectionMode(QAbstractItemView::SingleSelection);
+//    _albumView->setShowGrid(false);
+//    _albumView->verticalHeader()->hide();
+//    _albumView->setAlternatingRowColors(true);
+//    _albumView->setModel(_model);
 
-    _artistView->setCurrentIndex(0);
+//    connect(_albumView, SIGNAL(clicked(QModelIndex)),
+//		this, SLOT(showAlbumDetails(QModelIndex)));
+//    connect(_albumView, SIGNAL(activated(QModelIndex)),
+//		this, SLOT(showAlbumDetails(QModelIndex)));
 
-    connect(_model, SIGNAL(rowsInserted(QModelIndex,int,int)),
-            this, SLOT(updateHeader(QModelIndex,int,int)));
-    connect(_model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
-            this, SLOT(updateHeader(QModelIndex,int,int)));
+	_widthField = new QLineEdit;
+	_heightField = new QLineEdit;
+
+    _jobTable = new QTableView;
+
+//    QGridLayout *layout = new QGridLayout;
+//    layout->addWidget(_profileLabel, 0, 0);
+//    layout->addWidget(_iconLabel, 0, 1);
+//    layout->addWidget(_titleLabel, 1, 0, 1, 2);
+//    layout->addWidget(_trackList, 2, 0, 1, 2);
+//    layout->setRowStretch(2, 1);
+//    box->setLayout(layout);
+
+//    connect(_model, SIGNAL(rowsInserted(QModelIndex,int,int)),
+//            this, SLOT(updateHeader(QModelIndex,int,int)));
+//    connect(_model, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+//            this, SLOT(updateHeader(QModelIndex,int,int)));
+
+	QPushButton *addOrderButton = new QPushButton(tr("Add Order"));
+	connect(addOrderButton, SIGNAL(clicked()), this, SLOT(addOrder()));
 
     QGridLayout *layout = new QGridLayout;
-    layout->addWidget(artists, 0, 0);
-    layout->addWidget(albums, 1, 0);
-    layout->addWidget(details, 0, 1, 2, 1);
-    layout->setColumnStretch(1, 1);
-    layout->setColumnMinimumWidth(0, 500);
+    layout->addWidget(_orderTable, 0, 0, 1, 2);
+    layout->addWidget(_jobTable, 0, 2, 1, 2);
+    layout->addWidget(new QLabel(tr("Width:")), 1, 0);
+    layout->addWidget(_widthField, 1, 1);
+    layout->addWidget(new QLabel(tr("Height:")), 2, 0);
+    layout->addWidget(_heightField, 2, 1);
+    layout->addWidget(addOrderButton, 3, 0);
+//    layout->setColumnStretch(1, 1);
+//    layout->setColumnMinimumWidth(0, 500);
 
     QWidget *widget = new QWidget;
     widget->setLayout(layout);
     setCentralWidget(widget);
     createMenuBar();
 
-    showImageLabel();
     resize(850, 400);
     setWindowTitle(tr("Cinovka"));
 }
@@ -46,12 +73,11 @@ void MainWindow::changeArtist(int row)
 	{
         QModelIndex index = _model->relationModel(2)->index(row, 1);
         _model->setFilter("artist = '" + index.data().toString() + '\'') ;
-        showArtistProfile(index);
+//        showArtistProfile(index);
     } 
 	else if (row == 0) 
 	{
         _model->setFilter(QString());
-        showImageLabel();
     } 
 	else 
 	{
@@ -59,9 +85,9 @@ void MainWindow::changeArtist(int row)
     }
 }
 
-void MainWindow::showArtistProfile(QModelIndex index)
-{
-    QSqlRecord record = _model->relationModel(2)->record(index.row());
+//void MainWindow::showArtistProfile(QModelIndex index)
+//{
+/*    QSqlRecord record = _model->relationModel(2)->record(index.row());
 
     QString name = record.value("artist").toString();
     QString count = record.value("albumcount").toString();
@@ -69,12 +95,9 @@ void MainWindow::showArtistProfile(QModelIndex index)
 		"Number of Albums: %2").arg(name).arg(count));
 
     _profileLabel->show();
-    _iconLabel->show();
 
-    _titleLabel->hide();
-    _trackList->hide();
-    _imageLabel->hide();
-}
+    _trackList->hide();*/
+//}
 
 void MainWindow::showAlbumDetails(QModelIndex index)
 {
@@ -85,9 +108,7 @@ void MainWindow::showAlbumDetails(QModelIndex index)
     QString year = record.value("year").toString();
     QString albumId = record.value("albumid").toString();
 
-    showArtistProfile(indexOfArtist(artist));
-    _titleLabel->setText(tr("Title: %1 (%2)").arg(title).arg(year));
-    _titleLabel->show();
+//    showArtistProfile(indexOfArtist(artist));
 
     QDomNodeList albums = _albumData.elementsByTagName("album");
     for (int i = 0; i < albums.count(); i++) 
@@ -95,20 +116,20 @@ void MainWindow::showAlbumDetails(QModelIndex index)
         QDomNode album = albums.item(i);
         if (album.toElement().attribute("id") == albumId) 
 		{
-            getTrackList(album.toElement());
+//            getTrackList(album.toElement());
             break;
         }
     }
 
-    if (!_trackList->count() == 0)
-	{
-        _trackList->show();
-	}
+//    if (!_trackList->count() == 0)
+//	{
+//        _trackList->show();
+//	}
 }
 
-void MainWindow::getTrackList(QDomNode album)
-{
-    _trackList->clear();
+//void MainWindow::getTrackList(QDomNode album)
+//{
+/*    _trackList->clear();
 
     QDomNodeList tracks = album.childNodes();
     QDomNode track;
@@ -122,10 +143,12 @@ void MainWindow::getTrackList(QDomNode album)
         QListWidgetItem *item = new QListWidgetItem(_trackList);
         item->setText(trackNumber + ": " + track.toElement().text());
     }
-}
+*/
+//}
 
-void MainWindow::addAlbum()
+void MainWindow::addOrder()
 {
+/*
     Dialog *dialog = new Dialog(_model, _albumData, this);
     int accepted = dialog->exec();
 
@@ -136,10 +159,282 @@ void MainWindow::addAlbum()
         _albumView->scrollToBottom();
         showAlbumDetails(_model->index(lastRow, 0));
     }
+*/
 }
+
+/*
+#ifndef DIALOG_H
+#define DIALOG_H
+
+#include <QtWidgets>
+#include <QtSql>
+#include <QtXml>
+
+class Dialog : public QDialog
+{
+    Q_OBJECT
+
+public:
+    Dialog(QSqlRelationalTableModel *albums, QDomDocument details, 
+		QWidget *parent = 0);
+
+private slots:
+    void revert();
+    void submit();
+
+private:
+    int addNewAlbum(const QString &title, int artistId);
+    int addNewArtist(const QString &name);
+    void addTracks(int albumId, QStringList tracks);
+    QDialogButtonBox *createButtons();
+    QGroupBox *createInputWidgets();
+    int findArtistId(const QString &artist);
+    int generateAlbumId();
+    int generateArtistId();
+    void increaseAlbumCount(QModelIndex artistIndex);
+    QModelIndex indexOfArtist(const QString &artist);
+
+    QSqlRelationalTableModel *model;
+    QDomDocument albumDetails;
+
+    QLineEdit *artistEditor;
+    QLineEdit *titleEditor;
+    QSpinBox *yearEditor;
+    QLineEdit *tracksEditor;
+};
+
+#endif
+
+#include "dialog.h"
+
+int uniqueAlbumId;
+int uniqueArtistId;
+
+Dialog::Dialog(QSqlRelationalTableModel *albums, QDomDocument details, 
+	QWidget *parent) : QDialog(parent)
+{
+    model = albums;
+    albumDetails = details;
+
+    QGroupBox *inputWidgetBox = createInputWidgets();
+    QDialogButtonBox *buttonBox = createButtons();
+
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(inputWidgetBox);
+    layout->addWidget(buttonBox);
+    setLayout(layout);
+
+    setWindowTitle(tr("Add Album"));
+}
+
+void Dialog::submit()
+{
+    QString artist = artistEditor->text();
+    QString title = titleEditor->text();
+
+    if (artist.isEmpty() || title.isEmpty()) {
+        QString message(tr("Please provide both the name of the artist "
+                           "and the title of the album."));
+        QMessageBox::information(this, tr("Add Album"), message);
+    } else {
+        int artistId = findArtistId(artist);
+        int albumId = addNewAlbum(title, artistId);
+
+        QStringList tracks;
+        tracks = tracksEditor->text().split(',', QString::SkipEmptyParts);
+        addTracks(albumId, tracks);
+
+        increaseAlbumCount(indexOfArtist(artist));
+        accept();
+    }
+}
+
+int Dialog::findArtistId(const QString &artist)
+{
+    QSqlTableModel *artistModel = model->relationModel(2);
+    int row = 0;
+
+    while (row < artistModel->rowCount()) {
+        QSqlRecord record = artistModel->record(row);
+        if (record.value("artist") == artist)
+            return record.value("id").toInt();
+        else
+            row++;
+    }
+    return addNewArtist(artist);
+}
+
+
+int Dialog::addNewArtist(const QString &name)
+{
+    QSqlTableModel *artistModel = model->relationModel(2);
+    QSqlRecord record;
+
+    int id = generateArtistId();
+
+    QSqlField f1("id", QVariant::Int);
+    QSqlField f2("artist", QVariant::String);
+    QSqlField f3("albumcount", QVariant::Int);
+
+    f1.setValue(QVariant(id));
+    f2.setValue(QVariant(name));
+    f3.setValue(QVariant(0));
+    record.append(f1);
+    record.append(f2);
+    record.append(f3);
+
+    artistModel->insertRecord(-1, record);
+    return id;
+}
+
+int Dialog::addNewAlbum(const QString &title, int artistId)
+{
+    int id = generateAlbumId();
+    QSqlRecord record;
+
+    QSqlField f1("albumid", QVariant::Int);
+    QSqlField f2("title", QVariant::String);
+    QSqlField f3("artistid", QVariant::Int);
+    QSqlField f4("year", QVariant::Int);
+
+    f1.setValue(QVariant(id));
+    f2.setValue(QVariant(title));
+    f3.setValue(QVariant(artistId));
+    f4.setValue(QVariant(yearEditor->value()));
+    record.append(f1);
+    record.append(f2);
+    record.append(f3);
+    record.append(f4);
+
+    model->insertRecord(-1, record);
+    return id;
+}
+
+void Dialog::addTracks(int albumId, QStringList tracks)
+{
+    QDomElement albumNode = albumDetails.createElement("album");
+    albumNode.setAttribute("id", albumId);
+
+    for (int i = 0; i < tracks.count(); i++) {
+        QString trackNumber = QString::number(i);
+        if (i < 10)
+            trackNumber.prepend("0");
+
+        QDomText textNode = albumDetails.createTextNode(tracks.at(i));
+
+        QDomElement trackNode = albumDetails.createElement("track");
+        trackNode.setAttribute("number", trackNumber);
+        trackNode.appendChild(textNode);
+
+        albumNode.appendChild(trackNode);
+    }
+
+    QDomNodeList archive = albumDetails.elementsByTagName("archive");
+    archive.item(0).appendChild(albumNode);
+}
+
+void Dialog::increaseAlbumCount(QModelIndex artistIndex)
+{
+    QSqlTableModel *artistModel = model->relationModel(2);
+
+    QModelIndex albumCountIndex;
+    albumCountIndex = artistIndex.sibling(artistIndex.row(), 2);
+
+    int albumCount = albumCountIndex.data().toInt();
+    artistModel->setData(albumCountIndex, QVariant(albumCount + 1));
+}
+
+void Dialog::revert()
+{
+    artistEditor->clear();
+    titleEditor->clear();
+    yearEditor->setValue(QDate::currentDate().year());
+    tracksEditor->clear();
+}
+
+QGroupBox *Dialog::createInputWidgets()
+{
+    QGroupBox *box = new QGroupBox(tr("Add Album"));
+
+    QLabel *artistLabel = new QLabel(tr("Artist:"));
+    QLabel *titleLabel = new QLabel(tr("Title:"));
+    QLabel *yearLabel = new QLabel(tr("Year:"));
+    QLabel *tracksLabel = new QLabel(tr("Tracks (separated by comma):"));
+
+    artistEditor = new QLineEdit;
+    titleEditor = new QLineEdit;
+
+    yearEditor = new QSpinBox;
+    yearEditor->setMinimum(1900);
+    yearEditor->setMaximum(QDate::currentDate().year());
+    yearEditor->setValue(yearEditor->maximum());
+    yearEditor->setReadOnly(false);
+
+    tracksEditor = new QLineEdit;
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(artistLabel, 0, 0);
+    layout->addWidget(artistEditor, 0, 1);
+    layout->addWidget(titleLabel, 1, 0);
+    layout->addWidget(titleEditor, 1, 1);
+    layout->addWidget(yearLabel, 2, 0);
+    layout->addWidget(yearEditor, 2, 1);
+    layout->addWidget(tracksLabel, 3, 0, 1, 2);
+    layout->addWidget(tracksEditor, 4, 0, 1, 2);
+    box->setLayout(layout);
+
+    return box;
+}
+
+QDialogButtonBox *Dialog::createButtons()
+{
+    QPushButton *closeButton = new QPushButton(tr("&Close"));
+    QPushButton *revertButton = new QPushButton(tr("&Revert"));
+    QPushButton *submitButton = new QPushButton(tr("&Submit"));
+
+    closeButton->setDefault(true);
+
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(revertButton, SIGNAL(clicked()), this, SLOT(revert()));
+    connect(submitButton, SIGNAL(clicked()), this, SLOT(submit()));
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox;
+    buttonBox->addButton(submitButton, QDialogButtonBox::ResetRole);
+    buttonBox->addButton(revertButton, QDialogButtonBox::ResetRole);
+    buttonBox->addButton(closeButton, QDialogButtonBox::RejectRole);
+
+    return buttonBox;
+}
+
+QModelIndex Dialog::indexOfArtist(const QString &artist)
+{
+    QSqlTableModel *artistModel = model->relationModel(2);
+
+    for (int i = 0; i < artistModel->rowCount(); i++) {
+        QSqlRecord record =  artistModel->record(i);
+        if (record.value("artist") == artist)
+            return artistModel->index(i, 1);
+    }
+
+    return QModelIndex();
+}
+
+int Dialog::generateArtistId()
+{
+    uniqueArtistId += 1;
+    return uniqueArtistId;
+}
+
+int Dialog::generateAlbumId()
+{
+    uniqueAlbumId += 1;
+    return uniqueAlbumId;
+}
+*/
 
 void MainWindow::deleteAlbum()
 {
+/*
     QModelIndexList selection = _albumView->selectionModel()->selectedRows(0);
 
     if (!selection.empty()) 
@@ -159,8 +454,6 @@ void MainWindow::deleteAlbum()
             removeAlbumFromFile(id);
             removeAlbumFromDatabase(idIndex);
             decreaseAlbumCount(indexOfArtist(artist));
-
-            showImageLabel();
         }
     }
 	else 
@@ -168,6 +461,7 @@ void MainWindow::deleteAlbum()
         QMessageBox::information(this, tr("Delete Album"),
 			tr("Select the album you want to delete."));
     }
+*/
 }
 
 void MainWindow::removeAlbumFromFile(int id)
@@ -214,7 +508,6 @@ void MainWindow::decreaseAlbumCount(QModelIndex artistIndex)
     if (albumCount == 1) 
 	{
         artists->removeRow(row);
-        showImageLabel();
     }
 	else 
 	{
@@ -222,127 +515,24 @@ void MainWindow::decreaseAlbumCount(QModelIndex artistIndex)
     }
 }
 
-QGroupBox* MainWindow::createArtistGroupBox()
-{
-    _artistView = new QComboBox;
-    _artistView->setModel(_model->relationModel(2));
-    _artistView->setModelColumn(1);
-
-    connect(_artistView, SIGNAL(currentIndexChanged(int)),
-		this, SLOT(changeArtist(int)));
-
-    QGroupBox *box = new QGroupBox(tr("Artist"));
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(_artistView, 0, 0);
-    box->setLayout(layout);
-
-    return box;
-}
-
-QGroupBox* MainWindow::createAlbumGroupBox()
-{
-    QGroupBox *box = new QGroupBox(tr("Album"));
-
-    _albumView = new QTableView;
-    _albumView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    _albumView->setSortingEnabled(true);
-    _albumView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    _albumView->setSelectionMode(QAbstractItemView::SingleSelection);
-    _albumView->setShowGrid(false);
-    _albumView->verticalHeader()->hide();
-    _albumView->setAlternatingRowColors(true);
-    _albumView->setModel(_model);
-    adjustHeader();
-
-    QLocale locale = _albumView->locale();
-    locale.setNumberOptions(QLocale::OmitGroupSeparator);
-    _albumView->setLocale(locale);
-
-    connect(_albumView, SIGNAL(clicked(QModelIndex)),
-		this, SLOT(showAlbumDetails(QModelIndex)));
-    connect(_albumView, SIGNAL(activated(QModelIndex)),
-		this, SLOT(showAlbumDetails(QModelIndex)));
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(_albumView, 0, 0);
-    box->setLayout(layout);
-
-    return box;
-}
-
-QGroupBox* MainWindow::createDetailsGroupBox()
-{
-    QGroupBox *box = new QGroupBox(tr("Details"));
-
-    _profileLabel = new QLabel;
-    _profileLabel->setWordWrap(true);
-    _profileLabel->setAlignment(Qt::AlignBottom);
-
-    _titleLabel = new QLabel;
-    _titleLabel->setWordWrap(true);
-    _titleLabel->setAlignment(Qt::AlignBottom);
-
-    _iconLabel = new QLabel();
-    _iconLabel->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    _iconLabel->setPixmap(QPixmap(":/images/icon.png"));
-
-    _imageLabel = new QLabel;
-    _imageLabel->setWordWrap(true);
-    _imageLabel->setAlignment(Qt::AlignCenter);
-    _imageLabel->setPixmap(QPixmap(":/images/image.png"));
-
-    _trackList = new QListWidget;
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(_imageLabel, 0, 0, 3, 2);
-    layout->addWidget(_profileLabel, 0, 0);
-    layout->addWidget(_iconLabel, 0, 1);
-    layout->addWidget(_titleLabel, 1, 0, 1, 2);
-    layout->addWidget(_trackList, 2, 0, 1, 2);
-    layout->setRowStretch(2, 1);
-    box->setLayout(layout);
-
-    return box;
-}
-
 void MainWindow::createMenuBar()
 {
-    QAction *addAction = new QAction(tr("&Add album..."), this);
-    QAction *deleteAction = new QAction(tr("&Delete album..."), this);
     QAction *quitAction = new QAction(tr("&Quit"), this);
     QAction *aboutAction = new QAction(tr("&About"), this);
     QAction *aboutQtAction = new QAction(tr("About &Qt"), this);
 
-    addAction->setShortcut(tr("Ctrl+A"));
-    deleteAction->setShortcut(tr("Ctrl+D"));
     quitAction->setShortcuts(QKeySequence::Quit);
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction(addAction);
-    fileMenu->addAction(deleteAction);
-    fileMenu->addSeparator();
     fileMenu->addAction(quitAction);
 
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAction);
     helpMenu->addAction(aboutQtAction);
 
-    connect(addAction, SIGNAL(triggered(bool)), this, SLOT(addAlbum()));
-    connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(deleteAlbum()));
     connect(quitAction, SIGNAL(triggered(bool)), this, SLOT(close()));
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(aboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
-}
-
-void MainWindow::showImageLabel()
-{
-    _profileLabel->hide();
-    _titleLabel->hide();
-    _iconLabel->hide();
-    _trackList->hide();
-
-    _imageLabel->show();
 }
 
 QModelIndex MainWindow::indexOfArtist(const QString &artist)
@@ -359,19 +549,6 @@ QModelIndex MainWindow::indexOfArtist(const QString &artist)
     }
 
     return QModelIndex();
-}
-
-void MainWindow::updateHeader(QModelIndex, int, int)
-{
-    adjustHeader();
-}
-
-void MainWindow::adjustHeader()
-{
-//    _albumView->hideColumn(0);
-//    _albumView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-//    _albumView->resizeColumnToContents(2);
-//   _albumView->resizeColumnToContents(3);
 }
 
 void MainWindow::about()

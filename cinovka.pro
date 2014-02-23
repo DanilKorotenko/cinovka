@@ -1,9 +1,7 @@
 HEADERS   = Sources/database.h \
-            Sources/dialog.h \
             Sources/mainwindow.h
 
-SOURCES   = Sources/dialog.cpp \
-            Sources/main.cpp \
+SOURCES   = Sources/main.cpp \
             Sources/mainwindow.cpp
 
 MOC_DIR = moc

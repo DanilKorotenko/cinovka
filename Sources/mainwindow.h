@@ -13,6 +13,7 @@ class QLabel;
 class QListWidget;
 class QSqlRelationalTableModel;
 class QTableView;
+class QLineEdit;
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -24,35 +25,28 @@ public:
 
 private slots:
     void about();
-    void addAlbum();
+    void addOrder();
     void changeArtist(int row);
     void deleteAlbum();
     void showAlbumDetails(QModelIndex index);
-    void showArtistProfile(QModelIndex index);
-    void updateHeader(QModelIndex, int, int);
+//    void showArtistProfile(QModelIndex index);
 
 private:
-    void adjustHeader();
     QGroupBox *createAlbumGroupBox();
     QGroupBox *createArtistGroupBox();
     QGroupBox *createDetailsGroupBox();
     void createMenuBar();
     void decreaseAlbumCount(QModelIndex artistIndex);
-    void getTrackList(QDomNode album);
+//    void getTrackList(QDomNode album);
     QModelIndex indexOfArtist(const QString &artist);
     void readAlbumData();
     void removeAlbumFromDatabase(QModelIndex album);
     void removeAlbumFromFile(int id);
-    void showImageLabel();
 
-    QTableView *_albumView;
-    QComboBox *_artistView;
-    QListWidget *_trackList;
-
-    QLabel *_iconLabel;
-    QLabel *_imageLabel;
-    QLabel *_profileLabel;
-    QLabel *_titleLabel;
+    QTableView *_orderTable;
+    QTableView *_jobTable;
+	QLineEdit *_widthField;
+	QLineEdit *_heightField;
 
     QDomDocument _albumData;
     QSqlRelationalTableModel *_model;
