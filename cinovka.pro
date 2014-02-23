@@ -11,5 +11,5 @@ OBJECTS_DIR = obj
 
 QT += sql xml widgets
 
-EXAMPLE_FILES = albumdetails.xml
+CONFIG += debug
 

@@ -8,12 +8,15 @@
 
 static bool createConnection()
 {
+	qApp->tr("create connection.");
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(":memory:");
-    if (!db.open()) {
+    if (!db.open()) 
+	{
         QMessageBox::critical(0, qApp->tr("Cannot open database"),
         qApp->tr("Unable to establish a database connection."), 
-	QMessageBox::Cancel);
+		QMessageBox::Cancel);
         return false;
     }
 
@@ -44,6 +47,8 @@ static bool createConnection()
     query.exec("insert into albums values(6, 'Ompa Til Du D\xc3\xb8r', 3, 2001)");
     query.exec("insert into albums values(7, 'Evig Pint', 3, 2002)");
     query.exec("insert into albums values(8, 'Maestro', 3, 2005)");
+
+	qApp->tr("end create connection.");
 
     return true;
 }

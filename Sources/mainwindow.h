@@ -45,17 +45,17 @@ private:
     void removeAlbumFromFile(int id);
     void showImageLabel();
 
-    QTableView *albumView;
-    QComboBox *artistView;
-    QListWidget *trackList;
+    QTableView *_albumView;
+    QComboBox *_artistView;
+    QListWidget *_trackList;
 
-    QLabel *iconLabel;
-    QLabel *imageLabel;
-    QLabel *profileLabel;
-    QLabel *titleLabel;
+    QLabel *_iconLabel;
+    QLabel *_imageLabel;
+    QLabel *_profileLabel;
+    QLabel *_titleLabel;
 
-    QDomDocument albumData;
-    QSqlRelationalTableModel *model;
+    QDomDocument _albumData;
+    QSqlRelationalTableModel *_model;
 };
 
 #endif
