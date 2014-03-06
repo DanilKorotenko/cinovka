@@ -7,7 +7,6 @@
 
 QT_BEGIN_NAMESPACE
 class QComboBox;
-class QFile;
 class QGroupBox;
 class QLabel;
 class QListWidget;
@@ -20,8 +19,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(const QString &artistTable, const QString &albumTable,
-               QFile *albumDetails, QWidget *parent = 0);
+    MainWindow(const QString &artistTable, const QString &albumTable, 
+		QWidget *parent = 0);
 
 private slots:
     void about();
@@ -41,7 +40,6 @@ private:
     void decreaseAlbumCount(QModelIndex artistIndex);
     void getTrackList(QDomNode album);
     QModelIndex indexOfArtist(const QString &artist);
-    void readAlbumData();
     void removeAlbumFromDatabase(QModelIndex album);
     void removeAlbumFromFile(int id);
     void showImageLabel();
@@ -55,8 +53,6 @@ private:
     QLabel *profileLabel;
     QLabel *titleLabel;
 
-    QDomDocument albumData;
-    QFile *file;
     QSqlRelationalTableModel *model;
 };
 

@@ -8,13 +8,9 @@
 extern int uniqueAlbumId;
 extern int uniqueArtistId;
 
-MainWindow::MainWindow(const QString &artistTable, const QString &albumTable,
-                       QFile *albumDetails, QWidget *parent)
-     : QMainWindow(parent)
+MainWindow::MainWindow(const QString &artistTable, const QString &albumTable, 
+	QWidget *parent) : QMainWindow(parent)
 {
-    file = albumDetails;
-    readAlbumData();
-
     model = new QSqlRelationalTableModel(this);
     model->setTable(albumTable);
     model->setRelation(2, QSqlRelation(artistTable, "id", "artist"));
@@ -94,16 +90,19 @@ void MainWindow::showAlbumDetails(QModelIndex index)
     titleLabel->setText(tr("Title: %1 (%2)").arg(title).arg(year));
     titleLabel->show();
 
-    QDomNodeList albums = albumData.elementsByTagName("album");
-    for (int i = 0; i < albums.count(); i++) {
-        QDomNode album = albums.item(i);
-        if (album.toElement().attribute("id") == albumId) {
-            getTrackList(album.toElement());
-            break;
-        }
-    }
+//    QDomNodeList albums = albumData.elementsByTagName("album");
+//    for (int i = 0; i < albums.count(); i++) {
+//        QDomNode album = albums.item(i);
+//        if (album.toElement().attribute("id") == albumId) {
+//            getTrackList(album.toElement());
+//            break;
+//        }
+//    }
+
     if (!trackList->count() == 0)
+	{
         trackList->show();
+	}
 }
 
 void MainWindow::getTrackList(QDomNode album)
@@ -126,10 +125,11 @@ void MainWindow::getTrackList(QDomNode album)
 
 void MainWindow::addAlbum()
 {
-    Dialog *dialog = new Dialog(model, albumData, file, this);
+    Dialog *dialog = new Dialog(model, this);
     int accepted = dialog->exec();
 
-    if (accepted == 1) {
+    if (accepted == 1) 
+	{
         int lastRow = model->rowCount() - 1;
         albumView->selectRow(lastRow);
         albumView->scrollToBottom();
@@ -169,16 +169,16 @@ void MainWindow::deleteAlbum()
 
 void MainWindow::removeAlbumFromFile(int id)
 {
+//    QDomNodeList albums = albumData.elementsByTagName("album");
 
-    QDomNodeList albums = albumData.elementsByTagName("album");
-
-    for (int i = 0; i < albums.count(); i++) {
-        QDomNode node = albums.item(i);
-        if (node.toElement().attribute("id").toInt() == id) {
-            albumData.elementsByTagName("archive").item(0).removeChild(node);
-            break;
-        }
-    }
+//    for (int i = 0; i < albums.count(); i++) 
+//	{
+//        QDomNode node = albums.item(i);
+//        if (node.toElement().attribute("id").toInt() == id) {
+//            albumData.elementsByTagName("archive").item(0).removeChild(node);
+//            break;
+//        }
+//    }
 /*
     The following code is commented out since the example uses an in
     memory database, i.e., altering the XML file will bring the data
@@ -213,18 +213,6 @@ void MainWindow::decreaseAlbumCount(QModelIndex artistIndex)
     } else {
         artists->setData(albumCountIndex, QVariant(albumCount - 1));
     }
-}
-
-void MainWindow::readAlbumData()
-{
-    if (!file->open(QIODevice::ReadOnly))
-        return;
-
-    if (!albumData.setContent(file)) {
-        file->close();
-        return;
-    }
-    file->close();
 }
 
 QGroupBox* MainWindow::createArtistGroupBox()

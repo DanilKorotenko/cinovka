@@ -10,8 +10,7 @@ int main(int argc, char *argv[])
     if (!createConnection())
         return 1;
 
-    QFile *albumDetails = new QFile("albumdetails.xml");
-    MainWindow window("artists", "albums", albumDetails);
+    MainWindow window("artists", "albums");
     window.show();
     return app.exec();
 }

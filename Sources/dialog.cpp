@@ -3,13 +3,9 @@
 int uniqueAlbumId;
 int uniqueArtistId;
 
-Dialog::Dialog(QSqlRelationalTableModel *albums, QDomDocument details,
-               QFile *output, QWidget *parent)
-     : QDialog(parent)
+Dialog::Dialog(QSqlRelationalTableModel *albums, QWidget *parent) : QDialog(parent)
 {
     model = albums;
-    albumDetails = details;
-    outputFile = output;
 
     QGroupBox *inputWidgetBox = createInputWidgets();
     QDialogButtonBox *buttonBox = createButtons();
@@ -107,25 +103,25 @@ int Dialog::addNewAlbum(const QString &title, int artistId)
 
 void Dialog::addTracks(int albumId, QStringList tracks)
 {
-    QDomElement albumNode = albumDetails.createElement("album");
-    albumNode.setAttribute("id", albumId);
+//    QDomElement albumNode = albumDetails.createElement("album");
+//    albumNode.setAttribute("id", albumId);
 
-    for (int i = 0; i < tracks.count(); i++) {
-        QString trackNumber = QString::number(i);
-        if (i < 10)
-            trackNumber.prepend("0");
+//    for (int i = 0; i < tracks.count(); i++) {
+//        QString trackNumber = QString::number(i);
+//        if (i < 10)
+//            trackNumber.prepend("0");
 
-        QDomText textNode = albumDetails.createTextNode(tracks.at(i));
+//        QDomText textNode = albumDetails.createTextNode(tracks.at(i));
 
-        QDomElement trackNode = albumDetails.createElement("track");
-        trackNode.setAttribute("number", trackNumber);
-        trackNode.appendChild(textNode);
+//        QDomElement trackNode = albumDetails.createElement("track");
+//        trackNode.setAttribute("number", trackNumber);
+//        trackNode.appendChild(textNode);
 
-        albumNode.appendChild(trackNode);
-    }
+//        albumNode.appendChild(trackNode);
+//    }
 
-    QDomNodeList archive = albumDetails.elementsByTagName("archive");
-    archive.item(0).appendChild(albumNode);
+//    QDomNodeList archive = albumDetails.elementsByTagName("archive");
+//    archive.item(0).appendChild(albumNode);
 
 /*
     The following code is commented out since the example uses an in

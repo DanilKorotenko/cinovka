@@ -10,8 +10,7 @@ class Dialog : public QDialog
     Q_OBJECT
 
 public:
-    Dialog(QSqlRelationalTableModel *albums, QDomDocument details,
-           QFile *output, QWidget *parent = 0);
+    Dialog(QSqlRelationalTableModel *albums, QWidget *parent = 0);
 
 private slots:
     void revert();
@@ -30,8 +29,6 @@ private:
     QModelIndex indexOfArtist(const QString &artist);
 
     QSqlRelationalTableModel *model;
-    QDomDocument albumDetails;
-    QFile *outputFile;
 
     QLineEdit *artistEditor;
     QLineEdit *titleEditor;
